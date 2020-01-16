@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"> 
+  <changeSet author="arthur.zavadski" id="create_table_conta_contabil">
+    <createTable tableName="conta_contabil">
+      <column name="id" type="char(36)">
+        <constraints primaryKey="true" primaryKeyName="pk_conta_contabil"/>
+      </column>
+      <column name="version" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="nome" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="codigo" type="varchar(255)">
+        <constraints nullable="false" unique="true" uniqueConstraintName="unq_conta_contabil_codigo"/>
+      </column>      
+      <column name="conta_superior_id" type="char(36)">
+        <constraints  referencedTableName="conta_contabil" referencedColumnNames="id" foreignKeyName="fk_conta_contabil_superior"/>
+      </column>      
+    </createTable>
+  </changeSet>
+  <changeSet author="arthur.zavadski" id="create_table_plano_de_contas">
+    <createTable tableName="plano_de_contas">
+      <column name="id" type="char(36)">
+        <constraints primaryKey="true" primaryKeyName="pk_plano_de_contas"/>
+      </column>
+      <column name="version" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="descricao" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="inicio_vigencia" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="fim_vigencia" type="date">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="arthur.zavadski" id="create_table_conta_do_plano_de_contas">
+    <createTable tableName="conta_do_plano_de_contas">
+      <column name="id" type="char(36)">
+        <constraints primaryKey="true" primaryKeyName="pk_conta_do_plano_de_contas"/>
+      </column>
+      <column name="version" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="plano_de_contas_id" type="char(36)">
+        <constraints  referencedTableName="plano_de_contas" referencedColumnNames="id" foreignKeyName="fk_plano_da_conta_plano_de_contas"/>
+      </column>      
+      <column name="conta_contabil_id" type="char(36)">
+        <constraints  referencedTableName="conta_contabil" referencedColumnNames="id" foreignKeyName="fk_conta_contabil_da_conta_plano_de_contas"/>
+      </column>      
+    </createTable>
+  </changeSet>  
+  <changeSet author="arthur.zavadski" id="create_view_conta_do_plano_de_contas">
+  	<createView viewName="v_conta_do_plano_de_contas">
+  	   select cc.*,  cdp.plano_de_contas_id from conta_contabil cc inner join conta_do_plano_de_contas cdp on cdp.conta_contabil_id = cc.id
+  	</createView>
+  </changeSet>  
+</databaseChangeLog> 
